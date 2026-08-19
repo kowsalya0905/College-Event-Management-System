@@ -1,0 +1,164 @@
+### College Event Management System - Backend API Tests
+
+### 1. Register New Student
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "studentId": "STU001",
+  "email": "john@student.com",
+  "password": "password123",
+  "role": "STUDENT"
+}
+
+### 2. Register New Admin
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Admin User",
+  "studentId": "ADMIN001",
+  "email": "admin@college.edu",
+  "password": "admin123",
+  "role": "ADMIN"
+}
+
+### 3. Login as Student
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@student.com",
+  "password": "password123"
+}
+
+### 4. Login as Admin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@college.edu",
+  "password": "admin123"
+}
+
+### 5. Get All Published Events (Public)
+GET http://localhost:8080/api/events
+
+### 6. Create Event (Admin Only) - Replace YOUR_ADMIN_TOKEN
+POST http://localhost:8080/api/events
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Tech Symposium 2024",
+  "description": "Annual technology symposium featuring latest innovations",
+  "eventDate": "2024-12-25",
+  "startTime": "09:00",
+  "endTime": "17:00",
+  "location": "Main Auditorium",
+  "maxCapacity": 200,
+  "status": "PUBLISHED"
+}
+
+### 7. Create Draft Event (Admin Only) - Replace YOUR_ADMIN_TOKEN
+POST http://localhost:8080/api/events
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Cultural Fest 2024",
+  "description": "Annual cultural festival with music and dance",
+  "eventDate": "2024-12-30",
+  "startTime": "18:00",
+  "endTime": "22:00",
+  "location": "College Ground",
+  "maxCapacity": 500,
+  "status": "DRAFT"
+}
+
+### 8. Get All Events for Admin - Replace YOUR_ADMIN_TOKEN
+GET http://localhost:8080/api/events/admin/all
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+### 9. Get Specific Event Details - Replace EVENT_ID
+GET http://localhost:8080/api/events/1
+
+### 10. Update Event (Admin Only) - Replace YOUR_ADMIN_TOKEN and EVENT_ID
+PUT http://localhost:8080/api/events/1
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Updated Tech Symposium 2024",
+  "description": "Updated description for technology symposium",
+  "eventDate": "2024-12-26",
+  "startTime": "10:00",
+  "endTime": "16:00",
+  "location": "Updated Auditorium",
+  "maxCapacity": 250,
+  "status": "PUBLISHED"
+}
+
+### 11. Register for Event (Student Only) - Replace YOUR_STUDENT_TOKEN and EVENT_ID
+POST http://localhost:8080/api/events/1/register
+Authorization: Bearer YOUR_STUDENT_TOKEN
+
+### 12. Get User's Registered Events - Replace YOUR_STUDENT_TOKEN and USER_ID
+GET http://localhost:8080/api/users/2/events
+Authorization: Bearer YOUR_STUDENT_TOKEN
+
+### 13. Get Event Registrations (Admin Only) - Replace YOUR_ADMIN_TOKEN and EVENT_ID
+GET http://localhost:8080/api/events/1/registrations
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+### 14. Delete Event (Admin Only) - Replace YOUR_ADMIN_TOKEN and EVENT_ID
+DELETE http://localhost:8080/api/events/2
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+### Test Invalid Scenarios
+
+### 15. Try to Create Event as Student (Should Fail)
+POST http://localhost:8080/api/events
+Authorization: Bearer YOUR_STUDENT_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Event",
+  "description": "This should fail",
+  "eventDate": "2024-12-25",
+  "startTime": "09:00",
+  "endTime": "17:00",
+  "location": "Test Hall",
+  "maxCapacity": 100,
+  "status": "PUBLISHED"
+}
+
+### 16. Try to Register with Duplicate Email (Should Fail)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Duplicate User",
+  "studentId": "STU002",
+  "email": "john@student.com",
+  "password": "password123",
+  "role": "STUDENT"
+}
+
+### 17. Try to Login with Wrong Credentials (Should Fail)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@student.com",
+  "password": "wrongpassword"
+}
+
+### Instructions:
+# 1. Start your backend server: mvn spring-boot:run
+# 2. Run tests 1-4 first to get tokens
+# 3. Copy the tokens from login responses
+# 4. Replace YOUR_ADMIN_TOKEN and YOUR_STUDENT_TOKEN in subsequent requests
+# 5. Replace EVENT_ID and USER_ID with actual IDs from responses
+# 6. Run tests in order for best results

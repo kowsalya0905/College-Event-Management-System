@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration</title>
+</head>
+<body>
+    <h1>Test Event Registration</h1>
+    
+    <div>
+        <h2>Step 1: Login</h2>
+        <input type="email" id="email" placeholder="Email" value="727723euit109@skcet.ac.in">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <button onclick="login()">Login</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div>
+        <h2>Step 2: Register for Event</h2>
+        <input type="number" id="eventId" placeholder="Event ID" value="1">
+        <button onclick="registerForEvent()">Register</button>
+        <div id="registerResult"></div>
+    </div>
+
+    <script>
+        let token = '';
+        
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    document.getElementById('loginResult').innerHTML = 
+                        `<p style="color: green;">Login successful! Token: ${token.substring(0, 20)}...</p>`;
+                } else {
+                    document.getElementById('loginResult').innerHTML = 
+                        `<p style="color: red;">Login failed: ${data}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('loginResult').innerHTML = 
+                    `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function registerForEvent() {
+            const eventId = document.getElementById('eventId').value;
+            
+            if (!token) {
+                document.getElementById('registerResult').innerHTML = 
+                    '<p style="color: red;">Please login first!</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/events/${eventId}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    document.getElementById('registerResult').innerHTML = 
+                        `<p style="color: green;">Registration successful: ${data}</p>`;
+                } else {
+                    document.getElementById('registerResult').innerHTML = 
+                        `<p style="color: red;">Registration failed: ${data}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('registerResult').innerHTML = 
+                    `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
